@@ -1,0 +1,16 @@
+version: '2'
+
+services:
+  db:
+    ports:
+     - "3306:3306"
+    volumes:
+     - ./startupscripts:/docker-entrypoint-initdb.d
+    environment:
+     - MYSQL_ROOT_PASSWORD=pass
+     - MYSQL_DATABASE=db
+    image: mysql:latest
+  mygo:
+    build: ../src/
+    ports:
+     - "3000:3000"
