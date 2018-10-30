@@ -12,5 +12,10 @@ services:
     image: mysql:latest
   mygo:
     build: ../src/
+    depends_on:
+     - "db"
+    volumes:
+     - ./db_volume:/var
+    command: ["/var/test_db_connection.sh", "db:3306"]
     ports:
      - "3000:3000"
