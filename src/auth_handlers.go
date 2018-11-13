@@ -46,6 +46,12 @@ var CreateUserHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Req
 
 var GetUsersHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request){
 		
+    _, err := ValidateSession(w, r)
+    if err!= nil{
+        http.Error(w, `{"code": "Not Logged In or Invalid session. Please Relog"}`, 400)
+        return
+    }
+    
     decoder := json.NewDecoder(r.Body)
 
     var j struct {
@@ -53,7 +59,7 @@ var GetUsersHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Reque
         Value interface{}
     }
 
-    err := decoder.Decode(&j)
+    err = decoder.Decode(&j)
     if err != nil {
         panic(err)
     }
@@ -107,6 +113,8 @@ var LogoutUserHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Req
         return
     }
     LogoutSession(w, r)
+    
+    w.Write([]byte(`{"code": "success"}`))
 
 })
 
@@ -125,19 +133,43 @@ var DeleteUserHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Req
 })
 
 var UpdateUserHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request){
+    
+    /*
+    
     id, err := ValidateSession(w, r)
     if err!= nil{
         http.Error(w, `{"code": "Please relog"}`, 400)
         return
     }
-
+	*/
     decoder := json.NewDecoder(r.Body)
     var u User
-    err = decoder.Decode(&u)
+    err := decoder.Decode(&u)
     if err!= nil{
         http.Error(w, `{"code": "Invalid Json Format"}`, 400)
         return
     }
+    
+    var objmap map[string]*json.RawMessage
+    foo_marshalled, _ := json.Marshal(u)
+    
+    log.Println(string(foo_marshalled))
+    
+    
+    err = json.Unmarshal(foo_marshalled, &objmap)
+    for key, val := range objmap {
+
+	    log.Println("Key: " + key + "; Value: ")
+	    log.Println(val)
+    }
+    log.Println(objmap)
+    /*
+    
+    
+    
+    b, err = json.Marshal(u)
+	
 
     UpdateUserDB(id, u)
+    */
 })

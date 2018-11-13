@@ -30,7 +30,7 @@ func PingDB(){
         panic(err.Error()) // proper error handling instead of panic in your app
     }
 
-    log.Printf("Pinged the database succefully\n")
+    log.Printf("Pinged theasdasdsadasdasd database succefully\n")
 }
 
 
@@ -189,7 +189,9 @@ func UpdateUserDB(id int, u User) (err error){
 
     for key, val := range user {
 
-        log.Println("Key: " + key + "; Value: " + val.(string) )
+        log.Println("Key: " + key + "; Value: ")
+        log.Println(val)
+        
 
         /*
         switch concreteVal := val.(type) {

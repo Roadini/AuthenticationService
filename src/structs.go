@@ -9,7 +9,7 @@ type MyStruct struct {
 }
 
 type User struct {
-    Id int      `json:"id,omitempty"`
+    Id int      	`json:"id,omitempty"`
     Age int         `json:"age,omitempty"`
     Email string    `json:"email,omitempty"`
     Name string     `json:"name,omitempty"`
