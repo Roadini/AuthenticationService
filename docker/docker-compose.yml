@@ -15,10 +15,6 @@ services:
     depends_on:
      - "db"
     volumes:
-     - "../src:/go/src"
-     - ./db_volume:/var
-    environment:
-     GO_WORK_DIR: "/go/src/app"
-    command: ["/var/test_db_connection.sh", "db:3306"]
+     - "../src:/app"
     ports:
      - "3000:3000"

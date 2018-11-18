@@ -44,9 +44,10 @@ func main() {
     r.Handle("/social/v1/routes/get", RoutesGetHandler).Methods("POST")
 
 
-
     // Our application will run on port 3000. Here we declare the port and pass in our router.
     log.Printf("running at http://localhost:3000\n")
-    http.ListenAndServe(":3000", r)
+    log.Fatal(http.ListenAndServe(":3000", r))
+    
+    log.Printf("running at http://localhost:3000\n")
 }
 

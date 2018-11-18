@@ -14,7 +14,7 @@ import (
 )
 
 var DataBase *sql.DB
-var connect string = "root:pass@tcp(172.17.0.3:3306)/db?charset=utf8mb4,utf8&parseTime=True"
+var connect string = "root:pass@tcp(db:3306)/db?charset=utf8mb4,utf8&parseTime=True"
 
 func PingDB(){
     // Open doesn't open a connection. Validate DSN data:
@@ -30,7 +30,7 @@ func PingDB(){
         panic(err.Error()) // proper error handling instead of panic in your app
     }
 
-    log.Printf("Pinged theasdasdsadasdasd database succefully\n")
+    log.Printf("Pinged the database succefully\n")
 }
 
 

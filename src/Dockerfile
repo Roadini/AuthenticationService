@@ -1,30 +1,19 @@
-FROM golang:1.9-alpine
+# realize.dockerfile
+FROM golang:1.11beta2-alpine3.8
 
-RUN apk add --no-cache --update ca-certificates \
-		netcat-openbsd \
-        dpkg \
-        gcc \
-        git \
-        musl-dev \
-        bash
+RUN apk --update add git bash build-base netcat-openbsd && \
+    rm -rf /var/lib/apt/lists/* && \
+    rm /var/cache/apk/*
 
-WORKDIR /go/src/app
+WORKDIR /app
+VOLUME /app
+
+RUN go get github.com/oxequa/realize
+
 COPY . .
 
-RUN go get -d -v ./...
-RUN go install -v ./...
+RUN go get -v -d ./...
 
-ENV GOPATH /go
-ENV PATH $GOPATH/bin:/usr/local/go/bin:$PATH
+ENTRYPOINT ["/app/test_db_connection.sh"]
 
-COPY ./entrypoint.sh /entrypoint.sh 
-
-RUN mkdir -p "$GOPATH/src" "$GOPATH/bin" \
-    && chmod -R 777 "$GOPATH" \
-    && chmod +x /entrypoint.sh
-
-RUN go get github.com/tockins/realize
-WORKDIR $GOPATH
-
-ENTRYPOINT ["/entrypoint.sh"]
-CMD ["realize", "start"]
+CMD ["realize", "start", "--install", "--run", "--nc"]
