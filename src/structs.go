@@ -14,7 +14,7 @@ type User struct {
     Email string    `json:"email,omitempty"`
     Name string     `json:"name,omitempty"`
     Gender string   `json:"gender,omitempty"`
-    Pass string     `json:"pass,omitempty"`
+    Password string `json:"password,omitempty"`
     Hash [32]byte   `json:"hash,omitempty"`
     Salt []byte     `json:"salt,omitempty"`
 }
@@ -22,4 +22,15 @@ type User struct {
 type UserToOutside struct {
     Id , Age int
     Email, Name, Gender string
+}
+
+type Follows struct {
+    Id_follower int `json:"id_follower,omitempty"`
+    Id_followed int `json:"id_followed,omitempty"`
+    Accepted string `json:"accepted,omitempty"`
+}
+
+type Route struct{
+    Id int              `json:"id,omitempty"`
+    Description string  `json:"description,omitempty"`
 }

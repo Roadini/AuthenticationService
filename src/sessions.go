@@ -4,14 +4,13 @@ import (
 	"net/http"
 	"github.com/gorilla/sessions"
 	"errors"
-	"log"
 )
 
 var (
 	store = sessions.NewCookieStore([]byte("super-secret-key"))
 )
 
-func ValidateSession(w http.ResponseWriter, r *http.Request) (id int, err error){
+func ValidateSession(r *http.Request) (id int, err error){
 	session, _ := store.Get(r, "jwt")
 
 	if auth, ok := session.Values["authenticated"].(bool); !ok || !auth {
@@ -19,10 +18,9 @@ func ValidateSession(w http.ResponseWriter, r *http.Request) (id int, err error)
 		return
 	}
 
-	log.Println("coisas")
-	log.Println(string(session.Values["jwt"].([]byte)))
+	// log.Println(reflect.TypeOf(session.Values["jwt"]))
+	id, err = ValidateJWT([]byte(session.Values["jwt"].(string)))
 
-	id, err = ValidateJWT(session.Values["jwt"].([]byte))
 	if err != nil {
         return
 	}
@@ -32,15 +30,13 @@ func ValidateSession(w http.ResponseWriter, r *http.Request) (id int, err error)
 
 func LoginSession(w http.ResponseWriter, r *http.Request, id int,  name string) {
 	session, _ := store.Get(r, "jwt")
-
 	session.Values["authenticated"] = true
-	session.Values["jwt"] = GenerateJWT(id, name)
+	session.Values["jwt"] = string(GenerateJWT(id, name))
 	session.Save(r, w)
 }
 
 func LogoutSession(w http.ResponseWriter, r *http.Request) {
 	session, _ := store.Get(r, "jwt")
-
 	session.Values["authenticated"] = false
 	session.Values["jwt"] = ""
 	session.Save(r, w)

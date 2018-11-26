@@ -13,31 +13,11 @@ import (
     "github.com/fatih/structs"
 )
 
-var DataBase *sql.DB
-var connect string = "root:pass@tcp(db:3306)/db?charset=utf8mb4,utf8&parseTime=True"
-
-func PingDB(){
-    // Open doesn't open a connection. Validate DSN data:
-
-    DataBase,  err := sql.Open("mysql", connect)
-    if err != nil {
-        panic(err.Error())  // Just for example purpose. You should use proper error handling instead of panic
-    }
-    defer DataBase.Close()
-
-    err = DataBase.Ping()
-    if err != nil {
-        panic(err.Error()) // proper error handling instead of panic in your app
-    }
-
-    log.Printf("Pinged the database succefully\n")
-}
-
 
 func InsertUser(user *User) (err error){
     DataBase,  err := sql.Open("mysql", connect)
     if err != nil {
-        panic(err.Error())  // Just for example purpose. You should use proper error handling instead of panic
+        panic(err.Error()) 
     }
     defer DataBase.Close()
 
@@ -45,7 +25,7 @@ func InsertUser(user *User) (err error){
     rand.Read(salt)
     user.Salt = salt
 
-    user.Hash = sha256.Sum256(append([]byte(user.Pass), salt...))
+    user.Hash = sha256.Sum256(append([]byte(user.Password), salt...))
 
     insertUser, err := DataBase.Prepare("INSERT INTO user_details ( age , email, name, gender, salt, hash) VALUES (?, ?, ?, ?, ?, ?)") // ? = placeholder
     if err != nil {

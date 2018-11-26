@@ -23,6 +23,12 @@ func main() {
     r := mux.NewRouter()
     PingDB();
 
+    /* html */
+    // http.Handle("/static/style.css", http.StripPrefix("/static/", http.FileServer(http.Dir("/app/html"))))
+
+    /* Gui */
+    r.HandleFunc("/login", indexPageHandler)
+
     // On the default page we will simply serve our static index page.
     r.Handle("/auth/v1/createuser", CreateUserHandler).Methods("POST")
     r.Handle("/auth/v1/getusers", GetUsersHandler).Methods("POST")
@@ -34,14 +40,18 @@ func main() {
     r.Handle("/social/v1/follows/follow", FollowsFollowHandler).Methods("POST")
     r.Handle("/social/v1/follows/getfollowrequests", FollowsFollowRequestsHandler).Methods("POST")
     r.Handle("/social/v1/follows/allowfollow", FollowsAllowFollowHandler).Methods("POST")
+    r.Handle("/social/v1/follows/getfollowers", FollowsGetFollowers).Methods("POST")
+    r.Handle("/social/v1/follows/getfollowing", FollowsGetFollowing).Methods("POST")
     r.Handle("/social/v1/follows/removeafollower", FollowsRemoveFollowerHandler).Methods("POST")
     r.Handle("/social/v1/follows/stopfollowing", FollowsRemoveFollowingHandler).Methods("POST")
+
     r.Handle("/social/v1/likes/like", LikesLikeHandler).Methods("POST")
     r.Handle("/social/v1/likes/getlikes", LikesGetLikesHandler).Methods("POST")
     r.Handle("/social/v1/likes/unlike", LikesUnlikeHandler).Methods("POST")
-    r.Handle("/social/v1/routes/create", RoutesCreateHandler).Methods("POST")
-    r.Handle("/social/v1/routes/remove", RoutesRemoveHandler).Methods("POST")
-    r.Handle("/social/v1/routes/get", RoutesGetHandler).Methods("POST")
+    
+    r.Handle("/social/v1/publication/create", RoutesCreateHandler).Methods("POST")
+    r.Handle("/social/v1/publication/remove", RoutesRemoveHandler).Methods("POST")
+    r.Handle("/social/v1/publication/get", RoutesGetHandler).Methods("POST")
 
 
     // Our application will run on port 3000. Here we declare the port and pass in our router.

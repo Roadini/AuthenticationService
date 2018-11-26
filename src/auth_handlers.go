@@ -7,8 +7,6 @@ import (
     "log"
 )
 
-
-
 var CreateUserHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request){
 
     decoder := json.NewDecoder(r.Body)
@@ -28,7 +26,7 @@ var CreateUserHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Req
 
     w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 
-    if( user.Pass == "" ||
+    if( user.Password == "" ||
     user.Email == "" ||
     user.Name == ""){
         http.Error(w, `"code": "Invalid info"` , 400)
@@ -45,8 +43,9 @@ var CreateUserHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Req
 })
 
 var GetUsersHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request){
-		
-    _, err := ValidateSession(w, r)
+	
+
+    _, err := ValidateSession(r)
     if err!= nil{
         http.Error(w, `{"code": "Not Logged In or Invalid session. Please Relog"}`, 400)
         return
@@ -79,35 +78,62 @@ var GetUsersHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Reque
 
     w.Write([]byte(js))
 })
+func indexPageHandler(response http.ResponseWriter, request *http.Request) {
+    http.ServeFile(response, request, "/app/html/login.html")
+}
 
 var LoginUserHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request){
+
+    callback := true
+    keys, ok := r.URL.Query()["callbackURL"]
+    
+    if !ok || len(keys[0]) < 1 {
+        callback = false
+    }
+
+    log.Println(keys[0])
+
     decoder := json.NewDecoder(r.Body)
 
     var login_dets struct {
-        Email, Pass string
+        Email, Password string
     }
 
     err := decoder.Decode(&login_dets)
     if err != nil {
+        log.Println("Erro1")
         http.Error(w, `{"code": "Invalid Json structure"}`, 400)
         return
     }
 
-    if err := CheckUserPassDB(login_dets.Email, login_dets.Pass); err!= nil{
+    log.Println("User: " + login_dets.Email + "; Pass: " + login_dets.Password)
+
+
+    if err := CheckUserPassDB(login_dets.Email, login_dets.Password); err!= nil{
+        log.Println("Erro2")
+
         http.Error(w, `{"code": "`+ err.Error()+ `"}`, 400)
         return
     }
 
     users, _:= GetUsers("email", login_dets.Email)
+    log.Println("Id: " + string(users[0].Id) + "; Name: " + users[0].Name)
     LoginSession(w, r, users[0].Id, users[0].Name)
 
-    w.Write([]byte(`{"code": "success"}`))
+    if callback {
+        log.Println("Redirecting")
+        w.Write([]byte(`{"redirect": "youtube.com"}`))
+
+        http.Redirect(w, r, keys[0], http.StatusSeeOther)
+    } else{
+        w.Write([]byte(`{"code": "success"}`))
+    }
 
 })
 
 var LogoutUserHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request){
 
-    _, err := ValidateSession(w, r)
+    _, err := ValidateSession(r)
     if err!= nil{
         http.Error(w, `{"code": "Invalid Cookie. No need to logout. Relog"}`, 400)
         return
@@ -121,7 +147,7 @@ var LogoutUserHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Req
 
 var DeleteUserHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request){
 
-    id, err := ValidateSession(w, r)
+    id, err := ValidateSession(r)
     if err!= nil{
         http.Error(w, `{"code": "Please relog"}`, 400)
         return
@@ -134,14 +160,7 @@ var DeleteUserHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Req
 
 var UpdateUserHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request){
     
-    /*
-    
-    id, err := ValidateSession(w, r)
-    if err!= nil{
-        http.Error(w, `{"code": "Please relog"}`, 400)
-        return
-    }
-	*/
+
     decoder := json.NewDecoder(r.Body)
     var u User
     err := decoder.Decode(&u)

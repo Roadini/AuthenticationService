@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"time"
     "os"
+    "log"
     "path/filepath"
 	"github.com/SermoDigital/jose/crypto"
 	"github.com/SermoDigital/jose/jws"
@@ -22,10 +23,7 @@ func getDir() string  {
 }
 
 func GenerateJWT(id int, nome string) []byte {
-
-	dir := getDir()
-
-	bytes, _ := ioutil.ReadFile(dir + "/keys/sample_key.priv")
+	bytes, _ := ioutil.ReadFile("/app/keys/sample_key.priv")
 	claims := jws.Claims{}
 	
 	claims.SetExpiration(time.Now().Add(time.Duration(1000) * time.Second))
@@ -37,25 +35,24 @@ func GenerateJWT(id int, nome string) []byte {
 	
 	rsaPrivate, _ := crypto.ParseRSAPrivateKeyFromPEM(bytes)
 	
-	accessToken, _ := jws.NewJWT(claims, crypto.SigningMethodRS256).Serialize(rsaPrivate)
+	accessToken, err := jws.NewJWT(claims, crypto.SigningMethodRS256).Serialize(rsaPrivate)
+	if err != nil {
+        panic(err)
+	}
+	log.Println(string(accessToken))
 	return accessToken
 }
 	
 func ValidateJWT(accessToken []byte) (id int, err error){
-	
-	dir := getDir()
+	bytes, _ := ioutil.ReadFile("/app/keys/sample_key.pub")
 
-	bytes, _ := ioutil.ReadFile(dir + "/keys/sample_key.pub")
 	rsaPublic, _ := crypto.ParseRSAPublicKeyFromPEM(bytes)
 
 	j, err := jws.ParseJWT([]byte(accessToken))
 
 	err = j.Validate(rsaPublic, crypto.SigningMethodRS256)
 	id = int(jwt.Claims(j.Claims()).Get("Id").(float64))
-
-
+	
 	return id, err
-	
-	
 }
 
