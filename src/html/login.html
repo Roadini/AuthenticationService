@@ -177,7 +177,6 @@ $( "#li" ).submit(function( event ) {
     console.log(data);
     var url = new URL(document.URL);
     var c = url.searchParams.get("callbackURL");
-    console.log(c); ;
     $.ajax({
         type: "POST",
         url: "/auth/v1/login?callbackURL=" + c,
@@ -185,8 +184,10 @@ $( "#li" ).submit(function( event ) {
         data: JSON.stringify(returnArray),
 
         success: function(data, textStatus){
-          console.log(data);
-          console.log(data.redirect);
+          data = $.parseJSON(data);
+          console.log(c);
+          window.location.replace("/login");
+          //window.location.replace(c);
         }
     });
 });
@@ -202,16 +203,16 @@ $( "#register" ).submit(function( event ) {
     }
     var data = JSON.stringify(returnArray)
     console.log(data);
-
+    var url = new URL(document.URL);
+    var c = url.searchParams.get("callbackURL");
     $.ajax({
         type: "POST",
         url: "/auth/v1/createuser",
         processDataBoolean : false,
         data: JSON.stringify(returnArray),
-
         success: function(data, textStatus){
-          console.log(data);
-          console.log(data.redirect);
+          var obj = $.parseJSON(data);
+          window.location.replace("/login?callbackURL=" + c);
         }
     });
 });

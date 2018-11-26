@@ -117,12 +117,12 @@ var LoginUserHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Requ
     }
 
     users, _:= GetUsers("email", login_dets.Email)
-    log.Println("Id: " + string(users[0].Id) + "; Name: " + users[0].Name)
+    // log.Println("Id: " + string(users[0].Id) + "; Name: " + users[0].Name)
     LoginSession(w, r, users[0].Id, users[0].Name)
 
     if callback {
         log.Println("Redirecting")
-        w.Write([]byte(`{"redirect": "youtube.com"}`))
+        w.Write([]byte(`{"redirect": "` + keys[0] + `"}`))
 
         http.Redirect(w, r, keys[0], http.StatusSeeOther)
     } else{
