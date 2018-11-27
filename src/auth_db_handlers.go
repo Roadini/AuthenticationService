@@ -27,13 +27,13 @@ func InsertUser(user *User) (err error){
 
     user.Hash = sha256.Sum256(append([]byte(user.Password), salt...))
 
-    insertUser, err := DataBase.Prepare("INSERT INTO user_details ( age , email, name, gender, salt, hash) VALUES (?, ?, ?, ?, ?, ?)") // ? = placeholder
+    insertUser, err := DataBase.Prepare("INSERT INTO user_details ( age , description, email, name, gender, salt, hash) VALUES (?, ?, ?, ?, ?, ?, ?)") // ? = placeholder
     if err != nil {
         panic(err.Error()) // proper error handling instead of panic in your app
     }
     defer insertUser.Close() // Close the statement when we leave main() / the program terminates
 
-    _, err = insertUser.Exec( user.Age , user.Email, user.Name, user.Gender, string(user.Salt), string(user.Hash[:]))
+    _, err = insertUser.Exec( user.Age , user.Description, user.Email, user.Name, user.Gender, string(user.Salt), string(user.Hash[:]))
     return err
 }
 
@@ -59,15 +59,15 @@ func GetUsers(getBy string, value interface {}) (user_list []UserToOutside, err 
     }
 
     if (getBy == "id") {
-        query ="SELECT id, age, email, name, gender FROM user_details WHERE id = ?"
+        query ="SELECT id, description, age, email, name, gender FROM user_details WHERE id = ?"
     } else if (getBy == "age") {
-        query ="SELECT id, age, email, name, gender FROM user_details WHERE age = ?"
+        query ="SELECT id, description, age, email, name, gender FROM user_details WHERE age = ?"
     } else if (getBy == "email") {
-        query ="SELECT id, age, email, name, gender FROM user_details WHERE email = ?"
+        query ="SELECT id, description, age, email, name, gender FROM user_details WHERE email = ?"
     } else if (getBy == "name") {
-        query ="SELECT id, age, email, name, gender FROM user_details WHERE name = ?"
+        query ="SELECT id, description, age, email, name, gender FROM user_details WHERE name = ?"
     } else if (getBy == "gender") {
-        query ="SELECT id, age, email, name, gender FROM user_details WHERE gender = ?"
+        query ="SELECT id, description, age, email, name, gender FROM user_details WHERE gender = ?"
     } else {
         err = errors.New("Invalid provided info")
     }
@@ -81,7 +81,7 @@ func GetUsers(getBy string, value interface {}) (user_list []UserToOutside, err 
     // Get column names
     for rows.Next(){
         var u UserToOutside
-        if err := rows.Scan(&u.Id, &u.Age, &u.Email, &u.Name, &u.Gender ); err != nil {
+        if err := rows.Scan(&u.Id, &u.Description, &u.Age, &u.Email, &u.Name, &u.Gender ); err != nil {
             log.Fatal(err)
         }
         user_list = append(user_list, u)
@@ -116,12 +116,6 @@ func CheckUserPassDB(email string, pass string) (err error){
         err = errors.New("No user found")
     }
 
-    log.Println(data.Id)
-    log.Println(data.Email)
-    log.Println(data.Salt)
-    log.Println(data.Hash)
-
-
     var tmphash [32] byte = sha256.Sum256(append([]byte(pass), data.Salt...))
     
     // log.Println(tmphash[:])
@@ -132,6 +126,7 @@ func CheckUserPassDB(email string, pass string) (err error){
     }
     log.Println([]byte(data.Hash))
     log.Println(sha256.Sum256(append([]byte(pass), data.Salt...)))
+
 
 
     return err

@@ -21,7 +21,7 @@
   text-align: center;
   box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2), 0 5px 5px 0 rgba(0, 0, 0, 0.24);
 }
-.form input, .form select {
+.form input, .form select, .form textarea {
   font-family: "Roboto", sans-serif;
   outline: 0;
   background: #f2f2f2;
@@ -127,14 +127,18 @@ body {
 <div class="login-page">
   <div class="form">
     <form id="register" class="register-form">
-      <input type="text" name="name" placeholder="Name"/>
-      <input type="password" name="password" placeholder="Password"/>
       <input type="text" name="email" placeholder="Email Address"/>
-      <input type="text" name="age" placeholder="Age"/>
+      <input type="password" name="password" placeholder="Password"/>
+      <input type="text" name="name" placeholder="Name"/>
+      <select idtype="text" name="age" id="age" >
+        <option value="age" >Age</option>
+      </select>
       <select name="gender">
         <option value="male">Male</option>
         <option value="female">Female</option>
       </select>
+      <textarea rows="5" name="description" placeholder="Description"></textarea>
+      <div id="error" style="color: red; font-weight: bold;"></div>
       <button>create</button>
       <p class="message">Already registered? <a href="#">Sign In</a></p>
     </form>
@@ -162,6 +166,35 @@ body {
 
 <script>
 
+$(document).ready(function(){
+  var min = 5,
+  max = 100,
+  select = document.getElementById('age');
+
+  for (var i = min; i<=max; i++){
+      var opt = document.createElement('option');
+      opt.value = i;
+      opt.innerHTML = i;
+      select.appendChild(opt);
+  }
+});
+
+
+function getCookie(cname) {
+    var name = cname + "=";
+    var decodedCookie = decodeURIComponent(document.cookie);
+    var ca = decodedCookie.split(';');
+    for(var i = 0; i <ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0) == ' ') {
+            c = c.substring(1);
+        }
+        if (c.indexOf(name) == 0) {
+            return c.substring(name.length, c.length);
+        }
+    }
+    return "";
+}
 
 $('.message a').click(function(){
    $('form').animate({height: "toggle", opacity: "toggle"}, "slow");
@@ -171,7 +204,7 @@ $( "#li" ).submit(function( event ) {
     event.preventDefault();
     var returnArray = {};
     for (var i = 0; i < this.length -1; i++){
-        returnArray[this[i]['name']] = this[i]['value'];
+      returnArray[this[i]['name']] = this[i]['value'];
     }
     var data = JSON.stringify(returnArray)
     console.log(data);
@@ -184,10 +217,8 @@ $( "#li" ).submit(function( event ) {
         data: JSON.stringify(returnArray),
 
         success: function(data, textStatus){
-          data = $.parseJSON(data);
-          console.log(c);
-          window.location.replace("/login");
-          //window.location.replace(c);
+          console.log(getCookie("jwt"));
+          window.location.replace("/login?jwt="+getCookie("jwt"));
         }
     });
 });
@@ -196,9 +227,10 @@ $( "#register" ).submit(function( event ) {
     event.preventDefault();
     var returnArray = {};
     for (var i = 0; i < this.length -1; i++){
-        returnArray[this[i]['name']] = this[i]['value'];
-        if (this[i]['name'] == "age") {
+        if(this[i]['name'] == "age"){
           returnArray[this[i]['name']] = parseInt(this[i]['value']);
+        } else {
+          returnArray[this[i]['name']] = this[i]['value'];
         }
     }
     var data = JSON.stringify(returnArray)
@@ -210,9 +242,13 @@ $( "#register" ).submit(function( event ) {
         url: "/auth/v1/createuser",
         processDataBoolean : false,
         data: JSON.stringify(returnArray),
-        success: function(data, textStatus){
-          var obj = $.parseJSON(data);
-          window.location.replace("/login?callbackURL=" + c);
+        success: function(data){
+          // var obj = $.parseJSON(data);
+          $('form').animate({height: "toggle", opacity: "toggle"}, "slow");
+        },
+        error :  function(XMLHttpRequest, textStatus, errorThrown){
+          console.log(XMLHttpRequest);
+          $("#error").html(jQuery.parseJSON(XMLHttpRequest.responseText)["code"]);
         }
     });
 });

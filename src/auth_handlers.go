@@ -5,6 +5,7 @@ import (
     "encoding/json"
     mysql "github.com/go-sql-driver/mysql"
     "log"
+    "regexp"
 )
 
 var CreateUserHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request){
@@ -14,22 +15,26 @@ var CreateUserHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Req
     var user User
     err := decoder.Decode(&user)
     if err != nil {
-        panic(err)
-    }
-
-    x , _ := json.Marshal(user)
-    if err != nil {
-        http.Error(w, `"code": "Invalid Format"` , 400)
+        http.Error(w, `{"code": "`+ err.Error()+ `"}`, 400)
         return
     }
-    log.Println(string(x))
-
+ 
+    re := regexp.MustCompile("^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$")
+    if (!re.MatchString(user.Email)){
+        log.Println("Deu merda aqui")
+        http.Error(w, `{"code": "Invalid Email"}`, 400)
+        return
+    }
     w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+
+    log.Println(string(user.Password))
+    log.Println(string(user.Email))
+    log.Println(string(user.Name))
 
     if( user.Password == "" ||
     user.Email == "" ||
     user.Name == ""){
-        http.Error(w, `"code": "Invalid info"` , 400)
+        http.Error(w, `{"code": "Invalid info"}` , 400)
         return
     }
     
@@ -78,20 +83,35 @@ var GetUsersHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Reque
 
     w.Write([]byte(js))
 })
+
+
+var GetSelfUser = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request){
+    id, err := ValidateSession(r)
+    if err!= nil{
+        http.Error(w, `{"code": "Not Logged In or Invalid session. Please Relog"}`, 400)
+        return
+    }
+
+    users, err := GetUsers("id", id);
+    if  err!= nil{
+        http.Error(w, `{"code": "`+ err.Error()+ `"}`, 400)
+        return
+    }
+
+    js, err := json.Marshal(users)
+    if err != nil {
+        log.Fatal("Cannot encode to JSON ", err)
+    }
+
+    w.Write([]byte(js))
+})
+
+
 func indexPageHandler(response http.ResponseWriter, request *http.Request) {
     http.ServeFile(response, request, "/app/html/login.html")
 }
 
 var LoginUserHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request){
-
-    callback := true
-    keys, ok := r.URL.Query()["callbackURL"]
-    
-    if !ok || len(keys[0]) < 1 {
-        callback = false
-    }
-
-    log.Println(keys[0])
 
     decoder := json.NewDecoder(r.Body)
 
@@ -120,15 +140,7 @@ var LoginUserHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Requ
     // log.Println("Id: " + string(users[0].Id) + "; Name: " + users[0].Name)
     LoginSession(w, r, users[0].Id, users[0].Name)
 
-    if callback {
-        log.Println("Redirecting")
-        w.Write([]byte(`{"redirect": "` + keys[0] + `"}`))
-
-        http.Redirect(w, r, keys[0], http.StatusSeeOther)
-    } else{
-        w.Write([]byte(`{"code": "success"}`))
-    }
-
+    w.Write([]byte(`{"code": "success"}`))
 })
 
 var LogoutUserHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request){

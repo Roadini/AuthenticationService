@@ -32,6 +32,7 @@ func main() {
     // On the default page we will simply serve our static index page.
     r.Handle("/auth/v1/createuser", CreateUserHandler).Methods("POST")
     r.Handle("/auth/v1/getusers", GetUsersHandler).Methods("POST")
+    r.Handle("/auth/v1/getselfuser", GetSelfUser).Methods("POST")
     r.Handle("/auth/v1/deleteuser", DeleteUserHandler).Methods("POST")
     r.Handle("/auth/v1/login", LoginUserHandler).Methods("POST")
     r.Handle("/auth/v1/logout", LogoutUserHandler).Methods("POST")
