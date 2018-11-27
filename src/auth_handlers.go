@@ -89,12 +89,14 @@ var GetSelfUser = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request){
     id, err := ValidateSession(r)
     if err!= nil{
         http.Error(w, `{"code": "Not Logged In or Invalid session. Please Relog"}`, 400)
+        log.Println("Not Logged In or Invalid session. Please Relog")
         return
     }
 
     users, err := GetUsers("id", id);
     if  err!= nil{
         http.Error(w, `{"code": "`+ err.Error()+ `"}`, 400)
+        log.Println("Segundo Erro")
         return
     }
 
