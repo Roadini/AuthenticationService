@@ -37,6 +37,34 @@ func InsertUser(user *User) (err error){
     return err
 }
 
+func GetAllUsers() (user_list []UserToOutside, err error){
+
+    DataBase,  err := sql.Open("mysql", connect)
+    if err != nil {
+        panic(err.Error())  // Just for example purpose. You should use proper error handling instead of panic
+    }
+    defer DataBase.Close()
+
+    var query string
+    query ="SELECT id, description, age, email, name, gender FROM user_details"
+
+    rows, err := DataBase.Query(query)
+    if err != nil {
+        panic(err.Error()) // proper error handling instead of panic in your app
+    }
+
+    //var user_list []UserToOutside
+    // Get column names
+    for rows.Next(){
+        var u UserToOutside
+        if err := rows.Scan(&u.Id, &u.Description, &u.Age, &u.Email, &u.Name, &u.Gender ); err != nil {
+            log.Fatal(err)
+        }
+        user_list = append(user_list, u)
+    }
+
+    return user_list, err
+}
 func GetUsers(getBy string, value interface {}) (user_list []UserToOutside, err error){
 
     DataBase,  err := sql.Open("mysql", connect)

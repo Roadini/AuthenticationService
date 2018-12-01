@@ -37,6 +37,7 @@ func main() {
     r.Handle("/auth/v1/login", LoginUserHandler).Methods("POST")
     r.Handle("/auth/v1/logout", LogoutUserHandler).Methods("POST")
     r.Handle("/auth/v1/updateuser", UpdateUserHandler).Methods("POST")
+    r.Handle("/auth/v1/getallusers", GetAllUsersHandler).Methods("POST")
     
     r.Handle("/social/v1/follows/follow", FollowsFollowHandler).Methods("POST")
     r.Handle("/social/v1/follows/getfollowrequests", FollowsFollowRequestsHandler).Methods("POST")

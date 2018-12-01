@@ -19,7 +19,7 @@ func FollowDBHandler(id_follower int, id_followed int) (err error){
     }
     defer insertUser.Close() // Close the statement when we leave main() / the program terminates
 
-    _, err = insertUser.Exec( id_follower , id_followed, 0)
+    _, err = insertUser.Exec( id_follower , id_followed, 1)
     return err
 }
 

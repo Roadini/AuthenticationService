@@ -84,6 +84,28 @@ var GetUsersHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Reque
     w.Write([]byte(js))
 })
 
+var GetAllUsersHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request){
+	
+
+    _, err := ValidateSession(r)
+    if err!= nil{
+        http.Error(w, `{"code": "Not Logged In or Invalid session. Please Relog"}`, 400)
+        return
+    }
+    
+    users, err := GetAllUsers();
+    if  err!= nil{
+        http.Error(w, `{"code": "`+ err.Error()+ `"}`, 400)
+        return
+    }
+
+    js, err := json.Marshal(users)
+    if err != nil {
+        log.Fatal("Cannot encode to JSON ", err)
+    }
+
+    w.Write([]byte(js))
+})
 
 var GetSelfUser = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request){
     id, err := ValidateSession(r)

@@ -43,7 +43,7 @@ var FollowsFollowHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.
         return
     }
 
-    w.Write([]byte("{code: success}"))
+    w.Write([]byte(`{"code": "success"}`))
 })
 
 // Obter Follows
@@ -116,13 +116,21 @@ var FollowsGetFollowers = http.HandlerFunc(func(w http.ResponseWriter, r *http.R
     w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 
     /* Follower data */
-    follower, err := ValidateSession(r)
+    _, err := ValidateSession(r)
     if err != nil  {
         http.Error(w, `"code": "Invalid Session. Please Relog"` , 400)
         return
     }
+    decoder := json.NewDecoder(r.Body)
 
-    users, err := DBGetFollowering(follower, true)
+    var id struct {Id int `json:"id"`}
+    err = decoder.Decode(&id)
+    if err != nil {
+        http.Error(w, `"code": "Invalid json format"` , 400)
+        return
+    }
+
+    users, err := DBGetFollowering(id.Id, true)
     if err != nil {
         http.Error(w, `{"code": "`+ err.Error()+ `"}`, 400)
         return
@@ -140,13 +148,22 @@ var FollowsGetFollowing = http.HandlerFunc(func(w http.ResponseWriter, r *http.R
     w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 
     /* Follower data */
-    id, err := ValidateSession(r)
+    _, err := ValidateSession(r)
     if err != nil  {
         http.Error(w, `"code": "Invalid Session. Please Relog"` , 400)
         return
     }
 
-    users, err := DBGetFollowering(id, false)
+    decoder := json.NewDecoder(r.Body)
+
+    var id struct {Id int `json:"id"`}
+    err = decoder.Decode(&id)
+    if err != nil {
+        http.Error(w, `"code": "Invalid json format"` , 400)
+        return
+    }
+
+    users, err := DBGetFollowering(id.Id, false)
     if err != nil {
         http.Error(w, `{"code": "`+ err.Error()+ `"}`, 400)
         return
@@ -238,7 +255,7 @@ var FollowsRemoveFollowingHandler = http.HandlerFunc(func(w http.ResponseWriter,
         return
     }
 
-    response := "{code: success}"
+    response := `{"code": "success"}`
     w.Write([]byte(response))
 })
 
