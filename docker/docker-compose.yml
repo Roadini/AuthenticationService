@@ -2,19 +2,26 @@ version: '2'
 
 services:
   db:
-    ports:
-     - "3306:3306"
     volumes:
      - ./startupscripts:/docker-entrypoint-initdb.d
     environment:
      - MYSQL_ROOT_PASSWORD=pass
      - MYSQL_DATABASE=db
     image: mysql:latest
+    networks:
+     - roadiniserver_proxynet
+    container_name: auth_db
   mygo:
-    build: ../src/
+    image: auth
     depends_on:
      - "db"
     volumes:
      - "../src:/app"
-    ports:
-     - "3000:3000"
+    networks:
+     - roadiniserver_proxynet
+    container_name: auth_api
+
+networks:
+    roadiniserver_proxynet:
+        external: true
+
