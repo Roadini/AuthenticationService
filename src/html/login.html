@@ -127,9 +127,9 @@ body {
 <div class="login-page">
   <div class="form">
     <form id="register" class="register-form">
-      <input type="text" name="email" placeholder="Email Address"/>
+      <input type="text" name="email" placeholder="Email Address" autocomplete="off"/>
       <input type="password" name="password" placeholder="Password"/>
-      <input type="text" name="name" placeholder="Name"/>
+      <input type="text" name="name" placeholder="Name" autocomplete="off"/>
       <select idtype="text" name="age" id="age" >
         <option value="age" >Age</option>
       </select>
@@ -137,10 +137,10 @@ body {
         <option value="male">Male</option>
         <option value="female">Female</option>
       </select>
-      <textarea rows="5" name="description" placeholder="Description"></textarea>
+      <textarea rows="5" name="description" placeholder="Description" autocomplete="off"></textarea>
       <div id="error" style="color: red; font-weight: bold;"></div>
       <button>create</button>
-      <p class="message">Already registered? <a href="#">Sign In</a></p>
+      <p class="message"> Already registered? <a href="#">Sign In</a></p>
     </form>
 
 
@@ -155,6 +155,7 @@ body {
       <br>
       <input type="text" id="email" name="email" placeholder="email"/>
       <input type="password" id="password" name="password" placeholder="password"/>
+      <div id="error2" style="color: red; font-weight: bold;"></div>
       <button>login</button>
       <p class="message">Not registered? <a href="#">Create an account</a></p>
     </form>
@@ -197,6 +198,7 @@ function getCookie(cname) {
 }
 
 $('.message a').click(function(){
+  console.log("TSADasd");
    $('form').animate({height: "toggle", opacity: "toggle"}, "slow");
 });
 
@@ -220,6 +222,12 @@ $( "#li" ).submit(function( event ) {
           console.log(getCookie("jwt"));
           window.location.replace("/login?jwt="+getCookie("jwt"));
         }
+        /*
+        error :  function(XMLHttpRequest, textStatus, errorThrown){
+          console.log(XMLHttpRequest);
+          $("#error2").html(jQuery.parseJSON(XMLHttpRequest.responseText)["code"]);
+        }
+        */
     });
 });
 

@@ -6,6 +6,9 @@ import (
     mysql "github.com/go-sql-driver/mysql"
     "log"
     "regexp"
+    "fmt"
+    "strings"
+    "io/ioutil"
 )
 
 var CreateUserHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request){
@@ -38,12 +41,30 @@ var CreateUserHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Req
         return
     }
     
-    err = InsertUser(&user)
+    id, err := InsertUser(&user)
     if err != nil && err.(*mysql.MySQLError).Number == 1062 {
         http.Error(w, `{"code": "Duplicate email"}`, 400)
         return
     }
-    
+
+    response := fmt.Sprintf("{ \"username\": \"%[1]d\", \"password\": \"%[1]d%[2]s\", \"name\": \"%[3]s\", \"email\": \"%[2]s\" }", id, user.Email, user.Name)
+
+    log.Println(response)
+
+    client := &http.Client{}
+    req, err := http.NewRequest(
+        "POST",
+        "http://engserv-1-aulas.ws.atnog.av.it.pt/plugins/restapi/v1/users",
+        strings.NewReader(response))
+    req.Header.Set("Content-type", "application/json; charset=UTF-8")
+    req.SetBasicAuth("admin", "admin")
+    resp, err := client.Do(req)
+    if err != nil{
+        log.Fatal(err)
+    }
+    bodyText, err := ioutil.ReadAll(resp.Body)
+    log.Println(string(bodyText)) 
+
     w.Write([]byte(`{"code": "success"}`))
 })
 

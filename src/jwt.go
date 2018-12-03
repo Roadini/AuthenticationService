@@ -23,7 +23,7 @@ func GenerateJWT(id int, nome string) []byte {
 	bytes, _ := ioutil.ReadFile("/app/keys/sample_key.priv")
 	claims := jws.Claims{}
 	
-	claims.SetExpiration(time.Now().Add(time.Duration(1000) * time.Second))
+	claims.SetExpiration(time.Now().Add(time.Duration(24*60*60*30) * time.Second))
 	claims.SetIssuedAt(time.Now())
 	
 	claims.SetIssuer("JB's Micro Service")

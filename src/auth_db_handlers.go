@@ -14,7 +14,7 @@ import (
 )
 
 
-func InsertUser(user *User) (err error){
+func InsertUser(user *User) (id int, err error){
     DataBase,  err := sql.Open("mysql", connect)
     if err != nil {
         panic(err.Error()) 
@@ -34,7 +34,13 @@ func InsertUser(user *User) (err error){
     defer insertUser.Close() // Close the statement when we leave main() / the program terminates
 
     _, err = insertUser.Exec( user.Age , user.Description, user.Email, user.Name, user.Gender, string(user.Salt), string(user.Hash[:]))
-    return err
+    if err != nil {
+        return 0, err
+    }
+
+    use , _ := GetUsers("email", user.Email)
+    id = use[0].Id
+    return id, err
 }
 
 func GetAllUsers() (user_list []UserToOutside, err error){
