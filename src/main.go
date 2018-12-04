@@ -27,7 +27,8 @@ func main() {
     // http.Handle("/static/style.css", http.StripPrefix("/static/", http.FileServer(http.Dir("/app/html"))))
 
     /* Gui */
-    r.HandleFunc("/login", indexPageHandler)
+    r.HandleFunc("/login", loginPageHandler)
+    r.HandleFunc("/logout", logoutPageHandler)
 
     // On the default page we will simply serve our static index page.
     r.Handle("/auth/v1/createuser", CreateUserHandler).Methods("POST")

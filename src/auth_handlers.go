@@ -152,8 +152,11 @@ var GetSelfUser = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request){
 })
 
 
-func indexPageHandler(response http.ResponseWriter, request *http.Request) {
+func loginPageHandler(response http.ResponseWriter, request *http.Request) {
     http.ServeFile(response, request, "/app/html/login.html")
+}
+func logoutPageHandler(response http.ResponseWriter, request *http.Request) {
+    http.ServeFile(response, request, "/app/html/logout.html")
 }
 
 var LoginUserHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request){

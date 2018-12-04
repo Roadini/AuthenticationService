@@ -244,6 +244,7 @@ $( "#register" ).submit(function( event ) {
         success: function(data){
           // var obj = $.parseJSON(data);
           $('form').animate({height: "toggle", opacity: "toggle"}, "slow");
+          $("#email").val(returnArray["email"]);
         },
         error :  function(XMLHttpRequest, textStatus, errorThrown){
           console.log(XMLHttpRequest);
