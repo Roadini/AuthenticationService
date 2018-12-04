@@ -60,8 +60,7 @@ func GetRoutesRouteDBHandler(id int) (route_list []Route, err error){
         panic(err.Error()) // proper error handling instead of panic in your app
     }
     defer rows.Close()
-
-
+    
     for rows.Next(){
         var u Route
         if err := rows.Scan(&u.Id, &u.Description); err != nil {

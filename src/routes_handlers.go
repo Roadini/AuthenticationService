@@ -95,20 +95,23 @@ var RoutesGetHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Requ
     var route_list []Route
     route_list , err = GetRoutesRouteDBHandler(id.Id)
 
-
-    /*var route_list []Route
+    /*
+    var route_list []Route
     if foll || follower == id.Id{
     route_list , err = GetRoutesRouteDBHandler(id.Id)
     } else{
 	    http.Error(w, `"code": "Invalid Id or you don't follow the guy!"` , 400)
 	    return
-    }*/
+    }
+    */
 
     js, err := json.Marshal(route_list)
     if err != nil {
         http.Error(w, `{"code": "`+ err.Error()+ `"}`, 400)
+    } else if len(route_list) == 0 {
+        w.Write([]byte("[]"))
+    } else {
+        w.Write([]byte(js))
     }
-
-    w.Write([]byte(js))
 
 })
