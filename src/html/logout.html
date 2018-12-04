@@ -168,16 +168,11 @@ body {
 <script>
 
 $(document).ready(function(){
-  var min = 5,
-  max = 100,
-  select = document.getElementById('age');
-
-  for (var i = min; i<=max; i++){
-      var opt = document.createElement('option');
-      opt.value = i;
-      opt.innerHTML = i;
-      select.appendChild(opt);
-  }
+$.ajax({ url: "database/update.html",
+        context: document.body,
+        success: function(){
+           alert("done");
+        }});
 });
 
 
@@ -211,14 +206,21 @@ $( "#li" ).submit(function( event ) {
     var data = JSON.stringify(returnArray)
     console.log(data);
     var url = new URL(document.URL);
+    var c = url.searchParams.get("callbackURL");
     $.ajax({
         type: "POST",
         processDataBoolean : false,
         data: JSON.stringify(returnArray),
-        url: "/auth/v1/login",
+
         success: function(data, textStatus){
           location.reload(true);
         }
+        /*
+        error :  function(XMLHttpRequest, textStatus, errorThrown){
+          console.log(XMLHttpRequest);
+          $("#error2").html(jQuery.parseJSON(XMLHttpRequest.responseText)["code"]);
+        }
+        */
     });
 });
 
