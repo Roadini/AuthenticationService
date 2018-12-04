@@ -54,7 +54,7 @@ var CreateUserHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Req
     client := &http.Client{}
     req, err := http.NewRequest(
         "POST",
-        "http://engserv-1-aulas.ws.atnog.av.it.pt/plugins/restapi/v1/users",
+	"http://notificationservice_Openfire_1:9090/plugins/restapi/v1/users",
         strings.NewReader(response))
     req.Header.Set("Content-type", "application/json; charset=UTF-8")
     req.SetBasicAuth("admin", "admin")

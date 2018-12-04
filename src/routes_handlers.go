@@ -71,7 +71,7 @@ var RoutesGetHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Requ
     w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 
     /* Follower data */
-    follower, err := ValidateSession(r)
+    _, err := ValidateSession(r)
     if err != nil  {
         http.Error(w, `"code": "Invalid Session. Please Relog"` , 400)
         return
@@ -86,19 +86,23 @@ var RoutesGetHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Requ
         return
     }
 
-	foll, err := TestFollow(follower, id.Id)
+	/*foll, err := TestFollow(follower, id.Id)
     if err != nil {
         http.Error(w, `"code": "Invalid Ids"` , 400)
         return
-    }
+    }*/
 
     var route_list []Route
+    route_list , err = GetRoutesRouteDBHandler(id.Id)
+
+
+    /*var route_list []Route
     if foll || follower == id.Id{
-    	route_list , err = GetRoutesRouteDBHandler(id.Id)
-	} else{
-        http.Error(w, `"code": "Invalid Id or you don't follow the guy!"` , 400)
-        return
-	}
+    route_list , err = GetRoutesRouteDBHandler(id.Id)
+    } else{
+	    http.Error(w, `"code": "Invalid Id or you don't follow the guy!"` , 400)
+	    return
+    }*/
 
     js, err := json.Marshal(route_list)
     if err != nil {
