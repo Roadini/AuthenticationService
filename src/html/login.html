@@ -214,13 +214,11 @@ $( "#li" ).submit(function( event ) {
     var c = url.searchParams.get("callbackURL");
     $.ajax({
         type: "POST",
-        url: "/auth/v1/login?callbackURL=" + c,
         processDataBoolean : false,
         data: JSON.stringify(returnArray),
 
         success: function(data, textStatus){
-          console.log(getCookie("jwt"));
-          window.location.replace("/login?jwt="+getCookie("jwt"));
+          location.reload(true);
         }
         /*
         error :  function(XMLHttpRequest, textStatus, errorThrown){
