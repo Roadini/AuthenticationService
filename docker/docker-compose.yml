@@ -12,7 +12,7 @@ services:
      - roadiniserver_proxynet
     container_name: auth_db
   mygo:
-    image: auth
+    image: auth_api
     depends_on:
      - "db"
     volumes:

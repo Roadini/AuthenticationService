@@ -36,12 +36,20 @@ var LoginFb = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request){
 
     var i int
     fmt.Sscan(res["id"].(string), &i)
-
-    err = InsertUserFB(i, res["name"].(string), res["email"].(string), data.AccessToken)
+    u, err := GetUsers("id", i)
     if err != nil {
-        http.Error(w, `"code": "Error inserting user"` , 400)
+        panic(err)
+        http.Error(w, `"code": Critical Error` , 400)
         return
     }
+    if len(u) == 0 {
+        err = InsertUserFB(i, res["name"].(string), res["email"].(string), data.AccessToken)
+        if err != nil {
+            http.Error(w, `"code": "Error inserting user"` , 400)
+            return
+        }
+    }
+
 
     LoginSession(w, r, i, res["name"].(string))
 
