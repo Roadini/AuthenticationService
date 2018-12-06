@@ -39,3 +39,8 @@ type Route struct{
     Id int              `json:"id,omitempty"`
     Description string  `json:"description,omitempty"`
 }
+
+type Like struct{
+    Id_route    int  `json:"id_route,omitempty"`
+    Id_user     int  `json:"id_user,omitempty"`
+}

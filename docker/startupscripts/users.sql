@@ -24,13 +24,13 @@ CREATE TABLE IF NOT EXISTS routes (
     id_user     int(11)     NOT NULL,
     description TINYTEXT    NOT NULL,
     PRIMARY KEY (id),
-    FOREIGN KEY (id_user) REFERENCES user_details(id)
+    FOREIGN KEY (id_user) REFERENCES user_details(id) ON DELETE CASCADE
 ) DEFAULT CHARSET=utf8  AUTO_INCREMENT=1;
 
 CREATE TABLE IF NOT EXISTS likes (
     id_route    int(11)     NOT NULL,
     id_user     int(11)     NOT NULL,
     PRIMARY KEY (id_route, id_user),
-    FOREIGN KEY (id_user) REFERENCES user_details(id),
-    FOREIGN KEY (id_route) REFERENCES user_details(id)
+    FOREIGN KEY (id_user) REFERENCES user_details(id) ON DELETE CASCADE, 
+    FOREIGN KEY (id_route) REFERENCES user_details(id) ON DELETE CASCADE
 ) DEFAULT CHARSET=utf8;
