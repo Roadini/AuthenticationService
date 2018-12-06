@@ -29,6 +29,14 @@ type UserToOutside struct {
     Gender          string  `json:"gender,omitempty"`
 }
 
+type UserToOutsideFB struct {
+    Id              int     `json:"id,omitempty"`
+    Age             int     `json:"age,omitempty"`
+    Email           string  `json:"email,omitempty"`
+    Name            string  `json:"name,omitempty"`
+    Gender          string  `json:"gender,omitempty"`
+}
+
 type Follows struct {
     Id_follower int `json:"id_follower,omitempty"`
     Id_followed int `json:"id_followed,omitempty"`
@@ -43,4 +51,10 @@ type Route struct{
 type Like struct{
     Id_route    int  `json:"id_route,omitempty"`
     Id_user     int  `json:"id_user,omitempty"`
+}
+
+type FB_Login struct{
+    Id              string  `json:"userID,omitempty"`
+    AccessToken     string  `json:"accessToken,omitempty"`
+    SignedRequest   string  `json:"signedRequest,omitempty"`
 }
