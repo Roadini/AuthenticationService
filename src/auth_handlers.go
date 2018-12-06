@@ -161,6 +161,7 @@ func logoutPageHandler(response http.ResponseWriter, request *http.Request) {
 
 var LoginUserHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request){
 
+    log.Println("Entrou no login")
     decoder := json.NewDecoder(r.Body)
 
     var login_dets struct {
