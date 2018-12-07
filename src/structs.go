@@ -2,6 +2,10 @@ package main
 
 import (
     "database/sql"
+    "fmt"
+    "github.com/go-sql-driver/mysql"
+    "encoding/json"
+    "time"
 )
 
 type MyStruct struct {
@@ -9,7 +13,7 @@ type MyStruct struct {
 }
 
 type User struct {
-    Id int      	    `json:"id,omitempty"`
+    Id int		`json:"id,omitempty"`
     Age int             `json:"age,omitempty"`
     Email string        `json:"email,omitempty"`
     Name string         `json:"name,omitempty"`
@@ -22,11 +26,11 @@ type User struct {
 
 type UserToOutside struct {
     Id              int     `json:"id,omitempty"`
-    Age             sql.NullInt64 `json:"age,omitempty"`
+    Age             NullInt64 `json:"age,omitempty"`
     Email           string  `json:"email,omitempty"`
     Name            string  `json:"name,omitempty"`
-    Description     sql.NullString  `json:"description,omitempty"`
-    Gender          sql.NullString  `json:"gender,omitempty"`
+    Description     NullString  `json:"description,omitempty"`
+    Gender          NullString  `json:"gender,omitempty"`
 }
 
 
@@ -59,3 +63,31 @@ type FB_Login struct{
     AccessToken     string  `json:"accessToken,omitempty"`
     SignedRequest   string  `json:"signedRequest,omitempty"`
 }
+
+// NullInt64 is an alias for sql.NullInt64 data type
+type NullInt64 struct {
+	sql.NullInt64
+}
+
+// MarshalJSON for NullInt64
+func (ni *NullInt64) MarshalJSON() ([]byte, error) {
+	if !ni.Valid {
+		return []byte("null"), nil
+	}
+	return json.Marshal(ni.Int64)
+}
+
+
+// NullString is an alias for sql.NullString data type
+type NullString struct {
+	sql.NullString
+}
+
+// MarshalJSON for NullString
+func (ns *NullString) MarshalJSON() ([]byte, error) {
+	if !ns.Valid {
+		return []byte("null"), nil
+	}
+	return json.Marshal(ns.String)
+}
+
