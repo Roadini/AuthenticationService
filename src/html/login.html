@@ -119,19 +119,6 @@ body {
 <script>
 	
 
-/*(function(d, s, id) {
-  var js, fjs = d.getElementsByTagName(s)[0];
-  if (d.getElementById(id)) return;
-  js = d.createElement(s); js.id = id;
-  js.src = 'https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v3.2&appId=1844692959183467';
-  fjs.parentNode.insertBefore(js, fjs);
-}(document, 'script', 'facebook-jssdk'));
-<<<<<<< HEAD
-
-
-
-*/
-
 
    function statusChangeCallback(response) {
                 console.log('statusChangeCallback');
@@ -169,7 +156,6 @@ body {
                 }
             }
 
-
   window.fbAsyncInit = function() {
     FB.init({
       appId      : '259741264703474',
@@ -181,6 +167,27 @@ body {
 		  statusChangeCallback(response);
 	  });
   };
+  window.fbAsyncInit = function() {
+    FB.init({
+      appId      : '259741264703474',
+      xfbml      : true,
+      version    : 'v3.2'
+    });
+FB.login(function(response) {
+    if (response.authResponse) {
+     console.log('Welcome!  Fetching your information.... ');
+     FB.api('/me', function(response) {
+       console.log('Good to see you, ' + response.name + '.');
+     });
+    } else {
+     console.log('User cancelled login or did not fully authorize.');
+    }
+});
+	  FB.getLoginStatus(function(response) {
+		  statusChangeCallback(response);
+	  });
+  };
+
 
   (function(d, s, id){
      var js, fjs = d.getElementsByTagName(s)[0];
@@ -216,7 +223,7 @@ body {
 
     <form id="li" class="login-form">
       <!-- Facebook -->
-      <div class="fb-login-button" data-max-rows="1" data-size="large" data-button-type="continue_with" data-show-faces="false" data-auto-logout-link="false" data-use-continue-as="true"></div>
+      <div class="fb-login-button" scope="public_profile,email" data-max-rows="1" data-size="large" data-button-type="continue_with" data-show-faces="false" data-auto-logout-link="false" data-use-continue-as="true"></div>
 
       <br>
       <div class="message" style="font-size: 18px; font-weight: bold;">

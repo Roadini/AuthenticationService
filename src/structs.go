@@ -1,11 +1,11 @@
 package main
 
 import (
-
+    "database/sql"
 )
 
 type MyStruct struct {
-    SomeField string 
+    SomeField string
 }
 
 type User struct {
@@ -22,12 +22,13 @@ type User struct {
 
 type UserToOutside struct {
     Id              int     `json:"id,omitempty"`
-    Age             int     `json:"age,omitempty"`
-    Description     string  `json:"description,omitempty"`
+    Age             sql.NullInt64 `json:"age,omitempty"`
     Email           string  `json:"email,omitempty"`
     Name            string  `json:"name,omitempty"`
-    Gender          string  `json:"gender,omitempty"`
+    Description     sql.NullString  `json:"description,omitempty"`
+    Gender          sql.NullString  `json:"gender,omitempty"`
 }
+
 
 type UserToOutsideFB struct {
     Id              int     `json:"id,omitempty"`

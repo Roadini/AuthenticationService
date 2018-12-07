@@ -26,7 +26,6 @@ var LoginFb = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request){
         "access_token": data.AccessToken,
     })
 
-    res["email"]="luis@ua.pt"
 
     fmt.Println("Here is my Facebook first name:", res["name"])
     fmt.Println("Here is my Facebook first name:", res["id"])
@@ -34,16 +33,17 @@ var LoginFb = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request){
     fmt.Println("Here is my Facebook first name:", res["email"])
     fmt.Println("Here is my Facebook first name:", res["gender"])
 
-    var i int
-    fmt.Sscan(res["id"].(string), &i)
-    u, err := GetUsers("id", i)
+    var id int
+    fmt.Sscan(res["id"].(string), &id)
+    u, err := GetUsers("id", res["id"])
+    fmt.Println("merdaa antes")
     if err != nil {
         panic(err)
         http.Error(w, `"code": Critical Error` , 400)
         return
     }
     if len(u) == 0 {
-        err = InsertUserFB(i, res["name"].(string), res["email"].(string), data.AccessToken)
+        err = InsertUserFB(id, res["name"].(string), res["email"].(string), data.AccessToken)
         if err != nil {
             http.Error(w, `"code": "Error inserting user"` , 400)
             return
@@ -51,7 +51,7 @@ var LoginFb = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request){
     }
 
 
-    LoginSession(w, r, i, res["name"].(string))
+    LoginSession(w, r, id, res["name"].(string))
 
     w.Write([]byte(`{"code": "success"}`))
 })
@@ -62,6 +62,12 @@ func InsertUserFB(id int, name string, email string, accessToken string) (err er
         panic(err.Error()) 
     }
     defer DataBase.Close()
+
+
+    fmt.Println(id)
+    fmt.Println(name)
+    fmt.Println(email)
+    fmt.Println(accessToken)
 
     insertUser, err := DataBase.Prepare("INSERT INTO user_details ( id, name, email, accessToken) VALUES (?, ?, ?, ?)") // ? = placeholder
     if err != nil {
