@@ -96,6 +96,8 @@ func GetUsers(getBy string, value interface {}) (user_list []UserToOutside, err 
         query ="SELECT id, description, age, email, name, gender FROM user_details WHERE id = ?"
     } else if (getBy == "age") {
         query ="SELECT id, description, age, email, name, gender FROM user_details WHERE age = ?"
+    } else if (getBy == "fbid") {
+        query ="SELECT id, description, age, email, name, gender FROM user_details WHERE fbid = ?"
     } else if (getBy == "email") {
         query ="SELECT id, description, age, email, name, gender FROM user_details WHERE email = ?"
     } else if (getBy == "name") {

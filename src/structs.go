@@ -13,7 +13,7 @@ type MyStruct struct {
 }
 
 type User struct {
-    Id int		`json:"id,omitempty"`
+    Id int		        `json:"id,omitempty"`
     Age int             `json:"age,omitempty"`
     Email string        `json:"email,omitempty"`
     Name string         `json:"name,omitempty"`
@@ -23,6 +23,11 @@ type User struct {
     Hash [32]byte       `json:"hash,omitempty"`
     Salt []byte         `json:"salt,omitempty"`
 }
+
+    description varchar(255)    DEFAULT NULL,
+
+    accessToken varchar(300)    DEFAULT NULL,
+    id          BIGINT         DEFAULT NULL,
 
 type UserToOutside struct {
     Id              int     `json:"id,omitempty"`
@@ -36,10 +41,10 @@ type UserToOutside struct {
 
 type UserToOutsideFB struct {
     Id              int     `json:"id,omitempty"`
-    Age             int     `json:"age,omitempty"`
+    Age             NullInt64     `json:"age,omitempty"`
     Email           string  `json:"email,omitempty"`
     Name            string  `json:"name,omitempty"`
-    Gender          string  `json:"gender,omitempty"`
+    Gender          NullString  `json:"gender,omitempty"`
 }
 
 type Follows struct {

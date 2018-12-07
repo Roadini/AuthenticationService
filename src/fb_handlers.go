@@ -35,8 +35,7 @@ var LoginFb = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request){
 
     var id int
     fmt.Sscan(res["id"].(string), &id)
-    u, err := GetUsers("id", res["id"])
-    fmt.Println("merdaa antes")
+    u, err := GetUsers("fbid", res["id"])
     if err != nil {
         panic(err)
         http.Error(w, `"code": Critical Error` , 400)
@@ -50,7 +49,6 @@ var LoginFb = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request){
         }
     }
 
-
     LoginSession(w, r, id, res["name"].(string))
 
     w.Write([]byte(`{"code": "success"}`))
@@ -63,13 +61,12 @@ func InsertUserFB(id int, name string, email string, accessToken string) (err er
     }
     defer DataBase.Close()
 
-
     fmt.Println(id)
     fmt.Println(name)
     fmt.Println(email)
     fmt.Println(accessToken)
 
-    insertUser, err := DataBase.Prepare("INSERT INTO user_details ( id, name, email, accessToken) VALUES (?, ?, ?, ?)") // ? = placeholder
+    insertUser, err := DataBase.Prepare("INSERT INTO user_details ( fbid, name, email, accessToken) VALUES (?, ?, ?, ?)") // ? = placeholder
     if err != nil {
         panic(err.Error()) // proper error handling instead of panic in your app
     }
